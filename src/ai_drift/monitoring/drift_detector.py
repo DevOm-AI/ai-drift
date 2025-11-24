@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import Dict, List
-
+from scipy.stats import ks_2samp
 
 class DriftDetector:
     def __init__(self, reference: pd.DataFrame):
@@ -35,14 +35,35 @@ class DriftDetector:
                 drifted_features.append(col)
 
         return drifted_features
+    
+
+    def ks_test_drift(self, current: pd.DataFrame, p_threshold: float = 0.05):
+        """
+        Detect drift using Kolmogorov-Smirnov test (numeric features).
+        Returns features where p-value < p_threshold.
+        """
+        drifted = []
+
+        for col in self.numeric_features:
+            ref_values = self.reference[col].dropna()
+            cur_values = current[col].dropna()
+
+            stat, p_value = ks_2samp(ref_values, cur_values)
+
+            if p_value < p_threshold:
+                drifted.append(col)
+
+        return drifted
+
 
 
 
 if __name__ == "__main__":
     ref = pd.read_csv("src/ai_drift/data/reference.csv")
-    cur = pd.read_csv("src/ai_drift/data/current_sudden.csv")
+    cur = pd.read_csv("src/ai_drift/data/current_seasonal.csv")
 
     detector = DriftDetector(ref)
-    drifted = detector.z_score_drift(cur)
 
-    print("Drifted Features:", drifted)
+    print("Z-Score Drift:", detector.z_score_drift(cur))
+    print("KS-Test Drift:", detector.ks_test_drift(cur))
+
