@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from typing import Dict, List
 from scipy.stats import ks_2samp
+from scipy.stats import chi2_contingency
+
 
 class DriftDetector:
     def __init__(self, reference: pd.DataFrame):
@@ -55,15 +57,70 @@ class DriftDetector:
 
         return drifted
 
+    def chi_square_drift(self, current: pd.DataFrame, p_threshold: float = 0.05):
+        """
+        Detect drift for categorical features using Chi-square test.
+        Returns categorical columns where p-value < p_threshold.
+        """
+        drifted = []
+
+        for col in self.categorical_features:
+            # Create contingency table of value counts
+            ref_counts = self.reference[col].value_counts()
+            cur_counts = current[col].value_counts()
+
+            # Align categories
+            combined_index = ref_counts.index.union(cur_counts.index)
+            ref_aligned = ref_counts.reindex(combined_index, fill_value=0)
+            cur_aligned = cur_counts.reindex(combined_index, fill_value=0)
+
+            # Build contingency table
+            contingency_table = [ref_aligned.values, cur_aligned.values]
+
+            chi2, p_value, _, _ = chi2_contingency(contingency_table)
+
+            if p_value < p_threshold:
+                drifted.append(col)
+
+        return drifted
+
+
+
+    def detect_drift(self, current: pd.DataFrame):
+        """
+        Runs all drift tests and returns a unified drift report.
+        """
+        report = {
+            "z_score_drift": self.z_score_drift(current),
+            "ks_test_drift": self.ks_test_drift(current),
+            "chi_square_drift": self.chi_square_drift(current),
+        }
+
+        # Combine unique drifted features
+        all_drift = set(
+            report["z_score_drift"]
+            + report["ks_test_drift"]
+            + report["chi_square_drift"]
+        )
+
+        report["all_drifted_features"] = list(all_drift)
+
+        return report
 
 
 
 if __name__ == "__main__":
     ref = pd.read_csv("src/ai_drift/data/reference.csv")
-    cur = pd.read_csv("src/ai_drift/data/current_seasonal.csv")
+    cur = pd.read_csv("src/ai_drift/data/current_gradual.csv")
 
     detector = DriftDetector(ref)
 
-    print("Z-Score Drift:", detector.z_score_drift(cur))
-    print("KS-Test Drift:", detector.ks_test_drift(cur))
+    # print("Z-Score Drift:", detector.z_score_drift(cur))
+    # print("KS-Test Drift:", detector.ks_test_drift(cur))
+    # print("Chi-Square Drift:", detector.chi_square_drift(cur))
+    # print("Unified Drift Report:", detector.detect_drift(cur))
 
+    report = detector.detect_drift(cur)
+
+    print("Drift Report:")
+    print(report)
