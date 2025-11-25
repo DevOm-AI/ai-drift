@@ -6,6 +6,9 @@ from scipy.stats import chi2_contingency
 
 from alibi_detect.cd import KSDrift
 
+# from .dashboard import DriftDashboard
+from .dashboard_cyberpunk import CyberpunkDashboard
+
 
 class DriftDetector:
     def __init__(self, reference: pd.DataFrame):
@@ -146,8 +149,9 @@ if __name__ == "__main__":
 
     detector = DriftDetector(ref)
 
-    print("\nUnified Drift Report:")
-    print(detector.detect_drift(cur))
+    unified = detector.detect_drift(cur)
+    alibi = detector.alibi_drift(cur)
 
-    print("\nAlibi Drift Report:")
-    print(detector.alibi_drift(cur))
+    dash = CyberpunkDashboard(detector)
+    dash.save_html(ref, cur, unified, alibi, path="artifacts/drift_dashboard_cyberpunk.html")
+
