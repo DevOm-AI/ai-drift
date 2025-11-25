@@ -4,6 +4,8 @@ from typing import Dict, List
 from scipy.stats import ks_2samp
 from scipy.stats import chi2_contingency
 
+from alibi_detect.cd import KSDrift
+
 
 class DriftDetector:
     def __init__(self, reference: pd.DataFrame):
@@ -106,21 +108,46 @@ class DriftDetector:
         report["all_drifted_features"] = list(all_drift)
 
         return report
+        
+
+    def alibi_drift(self, current: pd.DataFrame):
+        results = {}
+
+        for col in self.numeric_features:
+            ref_vals = self.reference[col].values.reshape(-1, 1)
+            cur_vals = current[col].values.reshape(-1, 1)
+
+            cd = KSDrift(ref_vals, p_val=0.05)
+            preds = cd.predict(cur_vals)
+
+            is_drift  = bool(preds["data"]["is_drift"])
+            p_value = float(preds["data"]["p_val"].item())
+
+            results[col] = {
+                "is_drift": is_drift,
+                "p_value": p_value
+            }
+
+        return results
+
+
+    def save_evidently_dashboard(self, report, path="artifacts/evidently_report.html"):
+        import os
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        report.save(path)
+        print(f"Evidently dashboard saved at {path}")
+
 
 
 
 if __name__ == "__main__":
     ref = pd.read_csv("src/ai_drift/data/reference.csv")
-    cur = pd.read_csv("src/ai_drift/data/current_gradual.csv")
+    cur = pd.read_csv("src/ai_drift/data/current_sudden.csv")
 
     detector = DriftDetector(ref)
 
-    # print("Z-Score Drift:", detector.z_score_drift(cur))
-    # print("KS-Test Drift:", detector.ks_test_drift(cur))
-    # print("Chi-Square Drift:", detector.chi_square_drift(cur))
-    # print("Unified Drift Report:", detector.detect_drift(cur))
+    print("\nUnified Drift Report:")
+    print(detector.detect_drift(cur))
 
-    report = detector.detect_drift(cur)
-
-    print("Drift Report:")
-    print(report)
+    print("\nAlibi Drift Report:")
+    print(detector.alibi_drift(cur))
