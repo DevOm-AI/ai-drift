@@ -1,0 +1,15 @@
+{
+  "age": 35,
+  "gender": "male",
+  "geo_city": "Pune",
+  "membership_years": 2,
+  "session_duration": 300,
+  "page_views": 4,
+  "device_type": "mobile",
+  "cart_value": 120.0,
+  "spend_score": 60.0,
+  "income": 50000.0,
+  "purchased": 0,
+  "payment_method": "Card",
+  "timestamp": "2025-11-25T18:13:38.920170"
+}

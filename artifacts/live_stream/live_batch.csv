@@ -1,0 +1,16 @@
+timestamp,age,gender,geo_city,membership_years,session_duration,page_views,device_type,cart_value,spend_score,income,purchased,payment_method
+2025-11-25T18:13:10.602606,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:12.609865,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:14.619114,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:16.632426,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:18.639521,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:20.648060,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:22.659860,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:24.731852,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:26.747682,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:28.756601,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:30.765320,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:32.773245,35,male,Mumbai,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:34.780192,35,male,Pune,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:36.833973,35,male,Pune,2,300,4,mobile,120.0,60.0,50000.0,0,Card
+2025-11-25T18:13:38.920170,35,male,Pune,2,300,4,mobile,120.0,60.0,50000.0,0,Card
